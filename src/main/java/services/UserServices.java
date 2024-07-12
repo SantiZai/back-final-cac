@@ -4,18 +4,20 @@ import domain.models.User;
 import infrastructure.IPersistence;
 import infrastructure.database.MySQLPersistenceImpl;
 
+import java.util.ArrayList;
+
 public class UserServices implements IPersistence {
 
     private IPersistence persistence = new MySQLPersistenceImpl();
 
     @Override
     public void saveUser(User user) {
-        User newUser = new User(user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                PasswordServices.hashPassword(user.getPassword()),
-                user.getOrders());
         persistence.saveUser(user);
+    }
+
+    @Override
+    public ArrayList<User> findAllUsers() {
+        return persistence.findAllUsers();
     }
 
     @Override
