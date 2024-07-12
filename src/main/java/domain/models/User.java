@@ -1,7 +1,5 @@
 package domain.models;
 
-import java.util.ArrayList;
-
 public class User {
 
     private int id;
@@ -9,6 +7,10 @@ public class User {
     private String email;
     private String password;
     private String orders;
+
+    public User() {
+
+    }
 
     public User(int id, String username, String email, String password, String orders) {
         this.id = id;
