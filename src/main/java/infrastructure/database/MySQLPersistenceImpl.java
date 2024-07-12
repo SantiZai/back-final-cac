@@ -3,10 +3,7 @@ package infrastructure.database;
 import domain.models.User;
 import infrastructure.IPersistence;
 
-import java.sql.Array;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class MySQLPersistenceImpl implements IPersistence {
 
@@ -31,5 +28,27 @@ public class MySQLPersistenceImpl implements IPersistence {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        try {
+            PreparedStatement preparator = this.connection.prepareStatement(sql);
+            preparator.setString(1, username);
+
+            ResultSet results = preparator.executeQuery();
+            if(results.next()) {
+                User existingUser = new User(results.getInt("id"),
+                        results.getString("username"),
+                        results.getString("email"),
+                        results.getString("password"),
+                        results.getString("orders"));
+                return existingUser;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 }

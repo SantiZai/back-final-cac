@@ -6,4 +6,6 @@ public interface IPersistence {
 
     void saveUser(User user);
 
+    User findUserByUsername(String username);
+
 }
