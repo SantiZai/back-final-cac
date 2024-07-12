@@ -2,8 +2,10 @@ package infrastructure.database;
 
 import domain.models.User;
 import infrastructure.IPersistence;
+import services.PasswordServices;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class MySQLPersistenceImpl implements IPersistence {
 
@@ -15,16 +17,37 @@ public class MySQLPersistenceImpl implements IPersistence {
 
     @Override
     public void saveUser(User user) {
-        String sql = "INSERT INTO users (id, username, email, password, orders) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO users (username, email, password, orders) VALUES (?,?,?,?)";
         try {
             PreparedStatement preparator = this.connection.prepareStatement(sql);
-            preparator.setInt(1, user.getId());
-            preparator.setString(2, user.getUsername());
-            preparator.setString(3, user.getEmail());
-            preparator.setString(4, user.getPassword());
-            preparator.setString(5, user.getOrders());
+            preparator.setString(1, user.getUsername());
+            preparator.setString(2, user.getEmail());
+            preparator.setString(3, PasswordServices.hashPassword(user.getPassword()));
+            preparator.setString(4, "");
             preparator.executeUpdate();
             preparator.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ArrayList<User> findAllUsers() {
+        String sql = "SELECT * FROM users";
+        ArrayList<User> users = new ArrayList<>();
+        try {
+            PreparedStatement preparator = connection.prepareStatement(sql);
+            ResultSet resultsTable = preparator.executeQuery();
+
+            while (resultsTable.next()) {
+                User user = new User(resultsTable.getInt("id"),
+                        resultsTable.getString("username"),
+                        resultsTable.getString("email"),
+                        resultsTable.getString("password"),
+                        resultsTable.getString("orders"));
+                users.add(user);
+            }
+            return users;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
