@@ -10,6 +10,8 @@ public interface IPersistence {
 
     ArrayList<User> findAllUsers();
 
-    User findUserByUsername(String username);
+    User findUserByEmail(String email);
+
+    boolean login(String username, String password);
 
 }

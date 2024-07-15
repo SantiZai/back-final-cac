@@ -21,8 +21,13 @@ public class UserServices implements IPersistence {
     }
 
     @Override
-    public User findUserByUsername(String username) {
-        return persistence.findUserByUsername(username);
+    public User findUserByEmail(String email) {
+        return persistence.findUserByEmail(email);
+    }
+
+    @Override
+    public boolean login(String username, String password) {
+        return persistence.login(username, password);
     }
 
 }

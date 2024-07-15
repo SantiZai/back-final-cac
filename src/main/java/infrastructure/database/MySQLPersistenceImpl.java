@@ -54,11 +54,11 @@ public class MySQLPersistenceImpl implements IPersistence {
     }
 
     @Override
-    public User findUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+    public User findUserByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = ?";
         try {
             PreparedStatement preparator = this.connection.prepareStatement(sql);
-            preparator.setString(1, username);
+            preparator.setString(1, email);
 
             ResultSet results = preparator.executeQuery();
             if(results.next()) {
@@ -73,5 +73,14 @@ public class MySQLPersistenceImpl implements IPersistence {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    @Override
+    public boolean login(String email, String password) {
+        User user = this.findUserByEmail(email);
+        if(user != null) {
+            return PasswordServices.verifyPassword(password, user.getPassword());
+        }
+        return false;
     }
 }
